@@ -1,69 +1,62 @@
 {
-	"name": "csvtext",
+	"name": "workspace1099",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "AzureDataLakeStorage1",
+			"referenceName": "dataworkspace1099",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
-		"type": "DelimitedText",
-		"typeProperties": {
-			"location": {
-				"type": "AzureBlobFSLocation",
-				"fileName": "ActivityLog-01.csv",
-				"fileSystem": "data"
-			},
-			"columnDelimiter": ",",
-			"escapeChar": "\\",
-			"firstRowAsHeader": true,
-			"quoteChar": "\""
-		},
+		"type": "AzureSqlDWTable",
 		"schema": [
 			{
 				"name": "Correlationid",
-				"type": "String"
+				"type": "varchar"
 			},
 			{
 				"name": "Operationname",
-				"type": "String"
+				"type": "varchar"
 			},
 			{
 				"name": "Status",
-				"type": "String"
+				"type": "varchar"
 			},
 			{
 				"name": "Eventcategory",
-				"type": "String"
+				"type": "varchar"
 			},
 			{
 				"name": "Level",
-				"type": "String"
+				"type": "varchar"
 			},
 			{
 				"name": "Time",
-				"type": "String"
+				"type": "varchar"
 			},
 			{
 				"name": "Subscription",
-				"type": "String"
+				"type": "varchar"
 			},
 			{
 				"name": "Eventinitiatedby",
-				"type": "String"
+				"type": "varchar"
 			},
 			{
 				"name": "Resourcetype",
-				"type": "String"
+				"type": "varchar"
 			},
 			{
 				"name": "Resourcegroup",
-				"type": "String"
+				"type": "varchar"
 			},
 			{
 				"name": "Resource",
-				"type": "String"
+				"type": "varchar"
 			}
-		]
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "ActivityLog"
+		}
 	},
 	"type": "Microsoft.DataFactory/factories/datasets"
 }

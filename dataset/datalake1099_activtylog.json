@@ -1,8 +1,8 @@
 {
-	"name": "csvtext",
+	"name": "datalake1099_activtylog",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "AzureDataLakeStorage1",
+			"referenceName": "datalake1099",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],

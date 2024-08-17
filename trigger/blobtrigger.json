@@ -1,0 +1,17 @@
+{
+	"name": "blobtrigger",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/data/blobs/",
+			"ignoreEmptyBlobs": true,
+			"scope": "/subscriptions/2a4ce180-8649-493c-95be-ff2bd9490e7f/resourceGroups/data-grp/providers/Microsoft.Storage/storageAccounts/datalake1099",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}

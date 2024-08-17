@@ -1,0 +1,366 @@
+{
+	"name": "01_Datflow_Warehouse",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "FactOrderHeader",
+						"type": "DatasetReference"
+					},
+					"name": "Salesorderheaderstream"
+				},
+				{
+					"dataset": {
+						"referenceName": "salesorderdetail",
+						"type": "DatasetReference"
+					},
+					"name": "SalesOrderDetailTable"
+				},
+				{
+					"dataset": {
+						"referenceName": "customertable",
+						"type": "DatasetReference"
+					},
+					"name": "customerstream"
+				},
+				{
+					"dataset": {
+						"referenceName": "prodsuctdatasytream",
+						"type": "DatasetReference"
+					},
+					"name": "productstream"
+				},
+				{
+					"dataset": {
+						"referenceName": "productcategorytable",
+						"type": "DatasetReference"
+					},
+					"name": "productdetailstream"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSynapseAnalyticsTable2",
+						"type": "DatasetReference"
+					},
+					"name": "SurrogateMaxkeynum"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "facttable2",
+						"type": "DatasetReference"
+					},
+					"name": "FactSalesStream"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSynapseAnalyticsTable2",
+						"type": "DatasetReference"
+					},
+					"name": "customerstreamsink"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSynapseAnalyticsTable1",
+						"type": "DatasetReference"
+					},
+					"name": "productsink"
+				},
+				{
+					"name": "CacheMaxSurrogateKey"
+				}
+			],
+			"transformations": [
+				{
+					"name": "salesorderheaderjoinsalesorderdetail"
+				},
+				{
+					"name": "selectcolumnsofintrest"
+				},
+				{
+					"name": "selectcustomercolumns"
+				},
+				{
+					"name": "productjoinproductcategory"
+				},
+				{
+					"name": "selectprdouctofintrest"
+				},
+				{
+					"name": "filterNullrows"
+				},
+				{
+					"name": "DerivedTotalduecolumn"
+				},
+				{
+					"name": "ProductDimSurrogateKey"
+				},
+				{
+					"name": "SurroagateCustomerkey"
+				},
+				{
+					"name": "DerivedSurrogateKey"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          SalesOrderID as integer,",
+				"          RevisionNumber as integer,",
+				"          OrderDate as timestamp,",
+				"          DueDate as timestamp,",
+				"          ShipDate as timestamp,",
+				"          Status as integer,",
+				"          OnlineOrderFlag as boolean,",
+				"          SalesOrderNumber as string,",
+				"          PurchaseOrderNumber as string,",
+				"          AccountNumber as string,",
+				"          CustomerID as integer,",
+				"          ShipToAddressID as integer,",
+				"          BillToAddressID as integer,",
+				"          ShipMethod as string,",
+				"          CreditCardApprovalCode as string,",
+				"          SubTotal as decimal(19,4),",
+				"          TaxAmt as decimal(19,4),",
+				"          Freight as decimal(19,4),",
+				"          TotalDue as decimal(19,4),",
+				"          Comment as string,",
+				"          rowguid as string,",
+				"          ModifiedDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> Salesorderheaderstream",
+				"source(output(",
+				"          SalesOrderID as integer,",
+				"          SalesOrderDetailID as integer,",
+				"          OrderQty as integer,",
+				"          ProductID as integer,",
+				"          UnitPrice as decimal(19,4),",
+				"          UnitPriceDiscount as decimal(19,4),",
+				"          LineTotal as decimal(38,6),",
+				"          rowguid as string,",
+				"          ModifiedDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> SalesOrderDetailTable",
+				"source(output(",
+				"          CustomerID as integer,",
+				"          NameStyle as boolean,",
+				"          Title as string,",
+				"          FirstName as string,",
+				"          MiddleName as string,",
+				"          LastName as string,",
+				"          Suffix as string,",
+				"          CompanyName as string,",
+				"          SalesPerson as string,",
+				"          EmailAddress as string,",
+				"          Phone as string,",
+				"          PasswordHash as string,",
+				"          PasswordSalt as string,",
+				"          rowguid as string,",
+				"          ModifiedDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT * FROM SalesLT.Customer \\nWHERE \\nCustomerID > 20000',",
+				"     format: 'query') ~> customerstream",
+				"source(output(",
+				"          ProductID as integer,",
+				"          Name as string,",
+				"          ProductNumber as string,",
+				"          Color as string,",
+				"          StandardCost as decimal(19,4),",
+				"          ListPrice as decimal(19,4),",
+				"          Size as string,",
+				"          Weight as decimal(8,2),",
+				"          ProductCategoryID as integer,",
+				"          ProductModelID as integer,",
+				"          SellStartDate as timestamp,",
+				"          SellEndDate as timestamp,",
+				"          DiscontinuedDate as timestamp,",
+				"          ThumbNailPhoto as binary,",
+				"          ThumbnailPhotoFileName as string,",
+				"          rowguid as string,",
+				"          ModifiedDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> productstream",
+				"source(output(",
+				"          ProductCategoryID as integer,",
+				"          ParentProductCategoryID as integer,",
+				"          Name as string,",
+				"          rowguid as string,",
+				"          ModifiedDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> productdetailstream",
+				"source(output(",
+				"          MaxCustomerSk as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT MAX(CustomerSk) AS MaxCustomerSk FROM dbo.dimCustomer',",
+				"     format: 'query',",
+				"     staged: true) ~> SurrogateMaxkeynum",
+				"Salesorderheaderstream, SalesOrderDetailTable join(Salesorderheaderstream@SalesOrderID == SalesOrderDetailTable@SalesOrderID,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> salesorderheaderjoinsalesorderdetail",
+				"salesorderheaderjoinsalesorderdetail select(mapColumn(",
+				"          SalesOrderID = Salesorderheaderstream@SalesOrderID,",
+				"          OrderDate,",
+				"          SubTotal,",
+				"          CustomerID,",
+				"          TaxAmt,",
+				"          Freight,",
+				"          OrderQty,",
+				"          ProductID,",
+				"          UnitPrice,",
+				"          UnitPriceDiscount,",
+				"          LineTotal",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectcolumnsofintrest",
+				"customerstream select(mapColumn(",
+				"          CustomerID,",
+				"          CompanyName",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectcustomercolumns",
+				"productstream, productdetailstream join(productstream@ProductCategoryID == productdetailstream@ProductCategoryID,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> productjoinproductcategory",
+				"productjoinproductcategory select(mapColumn(",
+				"          ProductID,",
+				"          ProductNumber,",
+				"          Color,",
+				"          ProductCategoryID = productstream@ProductCategoryID,",
+				"          ProductCategoryName = productdetailstream@Name",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectprdouctofintrest",
+				"selectprdouctofintrest filter(!isNull(Color)) ~> filterNullrows",
+				"selectcolumnsofintrest derive(TotalDue = add(Freight,add(TaxAmt,SubTotal))) ~> DerivedTotalduecolumn",
+				"filterNullrows keyGenerate(output(ProductSk as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> ProductDimSurrogateKey",
+				"selectcustomercolumns keyGenerate(output(CustomerSk as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> SurroagateCustomerkey",
+				"SurroagateCustomerkey derive(CustomerSk = CustomerSk + CacheMaxSurrogateKey#outputs()[1].MaxCustomerSk) ~> DerivedSurrogateKey",
+				"DerivedTotalduecolumn sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          SalesOrderID as integer,",
+				"          OrderDate as timestamp,",
+				"          SubTotal as decimal(19,4),",
+				"          CustomerID as integer,",
+				"          TaxAmt as decimal(19,4),",
+				"          Freight as decimal(19,4),",
+				"          TotalDue as decimal(19,4),",
+				"          OrderQty as integer,",
+				"          ProductID as integer,",
+				"          UnitPrice as decimal(19,4),",
+				"          UnitPriceDiscount as decimal(19,4),",
+				"          LineTotal as decimal(18,0)",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     staged: true,",
+				"     allowCopyCommand: true,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          SalesOrderID,",
+				"          OrderDate,",
+				"          SubTotal,",
+				"          CustomerID,",
+				"          TaxAmt,",
+				"          Freight,",
+				"          TotalDue,",
+				"          OrderQty,",
+				"          ProductID,",
+				"          UnitPrice,",
+				"          UnitPriceDiscount,",
+				"          LineTotal",
+				"     )) ~> FactSalesStream",
+				"DerivedSurrogateKey sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          CustomerSk as integer,",
+				"          CustomerID as integer,",
+				"          CompanyName as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     staged: true,",
+				"     allowCopyCommand: true,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          CustomerSk,",
+				"          CustomerID,",
+				"          CompanyName",
+				"     )) ~> customerstreamsink",
+				"ProductDimSurrogateKey sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ProductSk as integer,",
+				"          ProductID as integer,",
+				"          ProductNumber as string,",
+				"          Color as string,",
+				"          ProductCategoryID as integer,",
+				"          ProductCategoryName as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     staged: true,",
+				"     allowCopyCommand: true,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          ProductSk,",
+				"          ProductID,",
+				"          ProductNumber,",
+				"          Color,",
+				"          ProductCategoryID,",
+				"          ProductCategoryName",
+				"     )) ~> productsink",
+				"SurrogateMaxkeynum sink(validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     store: 'cache',",
+				"     format: 'inline',",
+				"     output: false,",
+				"     saveOrder: 1) ~> CacheMaxSurrogateKey"
+			]
+		}
+	}
+}
