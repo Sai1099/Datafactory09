@@ -1,0 +1,27 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "datafactory1099"
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"value": ""
+		},
+		"azureSynapseworkspace_password": {
+			"value": ""
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"value": "https://datalake1099.dfs.core.windows.net/"
+		},
+		"azureSynapseworkspace_properties_typeProperties_server": {
+			"value": "dataworkspace1099.sql.azuresynapse.net"
+		},
+		"azureSynapseworkspace_properties_typeProperties_database": {
+			"value": "datapool"
+		},
+		"azureSynapseworkspace_properties_typeProperties_userName": {
+			"value": "sqladminuser"
+		}
+	}
+}
