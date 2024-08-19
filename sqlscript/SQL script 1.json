@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 1",
+	"properties": {
+		"content": {
+			"query": "SELECT TOP (100) [SalesOrderID]\n,[SalesOrderDetailID]\n,[OrderQty]\n,[ProductID]\n,[UnitPrice]\n,[UnitPriceDiscount]\n,[LineTotal]\n,[rowguid]\n,[ModifiedDate]\n FROM [SalesLT].[SalesOrderDetail]\n\n\n SELECT * FROM FACT_Table\n\nDROP DATABASE sparkdb;\n DROP TABLE dimProduct\n\n CREATE TABLE dimProduct(\n    ProductSk INT NOT NULL,\n    ProductID INT NOT NULL,\n    ProductNumber varchar(100) NOT NULL,\n    Color varchar(20) NOT NULL,\n    ProductCategoryID int NOT NULL,\n    ProductCategoryName varchar(200) NOT NULL\n )\n WITH(\n    DISTRIBUTION = REPLICATE\n )\n \n DROP TABLE dimCustomer\n\n CREATE TABLE dimCustomer(\n    CustomerSk INT IDENTITY(1,1) NOT NULL,\n    CustomerID INT NOT NULL,\n    CompanyName VARCHAR(500) NOT NULL\n )\n WITH(\n    DISTRIBUTION = REPLICATE\n )\n SELECT * FROM dimProduct\n\n CREATE TABLE BlobDiagnostics(\n   Category VARCHAR(300),\n   OperationName VARCHAR(300),\n   StatusText VARCHAR(300),\n   ObjectKey VARCHAR(2000),\n   IdentityType VARCHAR(500),\n   TokenHash VARCHAR(2000)\n )\n\n SELECT * FROM BlobDiagnostics;",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "default",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

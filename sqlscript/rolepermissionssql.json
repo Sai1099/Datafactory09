@@ -1,0 +1,17 @@
+{
+	"name": "rolepermissionssql",
+	"properties": {
+		"content": {
+			"query": "CREATE TABLE dbo.CourseOrders\n(\n    OrderId Int,\n    Agent VARCHAR(20),\n    Course varchar(50),\n    Quantity int\n)\n\n\n\n\nINSERT INTO [dbo].[CourseOrders] VALUES(1,'AgentA','AZ-900',5);\nINSERT INTO [dbo].[CourseOrders] VALUES(2,'AgentA','DP-203',4);\nINSERT INTO [dbo].[CourseOrders] VALUES(3,'AgentB','AZ-104',5);\nINSERT INTO [dbo].[CourseOrders] VALUES(4,'AgentB','AZ-303',6);\nINSERT INTO [dbo].[CourseOrders] VALUES(5,'AgentA','AZ-304',7);\nINSERT INTO [dbo].[CourseOrders] VALUES(6,'AgentB','DP-900',8);\n\nCREATE USER supervisor WITHOUT LOGIN;\nCREATE USER AgentA WITHOUT LOGIN;\nCREATE USER AgentB WITHOUT LOGIN;\n\nDROP USER UserA\nDROP USER UserB\nGRANT SELECT ON [dbo].[CourseOrders] TO Supervisor; \nGRANT SELECT ON [dbo].[CourseOrders] TO AgentA; \nGRANT SELECT ON [dbo].[CourseOrders] TO AgentB; \n\nCREATE SCHEMA Security;\n\n\nCREATE FUNCTION Security.securitypredicate(@Agent AS nvarchar(50))  \n    RETURNS TABLE  \nWITH SCHEMABINDING  \nAS  \n    RETURN SELECT 1 AS securitypredicate_result\nWHERE @Agent = USER_NAME() OR USER_NAME() = 'Supervisor';\n\nCREATE SECURITY POLICY Filter  \nADD FILTER PREDICATE Security.securitypredicate(Agent)\nON [dbo].[CourseOrders] \nWITH (STATE = ON);  \nGO\n\nGRANT SELECT ON Security.securitypredicate TO Supervisor;\nGRANT SELECT ON Security.securitypredicate TO AgentA;  \nGRANT SELECT ON Security.securitypredicate TO AgentB;  \n\n\n\nDROP USER Supervisor;\nDROP USER AgentA;\nDROP USER AgentB;\n\nDROP SECURITY POLICY Filter;\nDROP TABLE [dbo].[CourseOrders];\nDROP FUNCTION Security.securitypredicate;\nDROP SCHEMA Security;\n\n\nSELECT * FROM PoolActivityLog\n\nSELECT * FROM CourseOrders ORDER BY OrderId",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "datapool",
+				"poolName": "datapool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

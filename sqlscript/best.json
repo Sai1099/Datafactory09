@@ -1,0 +1,17 @@
+{
+	"name": "best",
+	"properties": {
+		"content": {
+			"query": "SELECT * FROM PoolActivityLog;\nDROP TABLE PoolActivityLog\n\nCREATE TABLE PoolActivityLog_new (\n    Correlationid VARCHAR(200),\n    Operationname VARCHAR(100),\n    Status VARCHAR(300),\n    Eventcategory VARCHAR(200),\n    Level VARCHAR(300),\n    Time DATETIME,\n    Subscription VARCHAR(3000),\n    Eventinitiatedby VARCHAR(200),\n    Resourcetype VARCHAR(1000),\n    Resourcegroup VARCHAR(500),\n    Resource VARCHAR(3000)\n) WITH(\n    DISTRIBUTION = HASH(Operationname),\n    PARTITION(\n        Time RANGE RIGHT FOR VALUES\n        ('2024-05-01')\n    )\n)\n\nALTER TABLE PoolActivityLog SWITCH PARTITION 2 TO PoolActivityLog_new PARTITION 1;\n\nSELECT FORMAT(Time,'yyyy-MM-dd') AS 'Operational Date Time',COUNT(Operationname) AS 'Number of oprations'\nFROM PoolActivityLog_new\nGroup BY FORMAT(Time,'yyyy-MM-dd')\nORDER BY 'Operational Date Time'\nSELECT DISTINCT(Eventcategory) FROM PoolActivityLog_new\n\nSELECT Operationname,\nEventcategory,\nEventTier = CASE [Eventcategory]\nWHEN 'Administrative' THEN 'TIER 1'\nWHEN 'Policy' THEN 'TIER 2'\nWHEN 'Resource Health' THEN 'TIER 3'\nWHEN 'Service Health' THEN 'TIER 4'\nWHEN 'Autoscale' THEN 'TIER 5'\nWHEN 'Recommendation' THEN 'TIER 6'\nEND\nFROM PoolActivityLog_new",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "datapool",
+				"poolName": "datapool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

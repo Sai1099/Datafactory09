@@ -1,0 +1,17 @@
+{
+	"name": "08-Copydataparquet",
+	"properties": {
+		"content": {
+			"query": "DROP TABLE PoolActivityLog\n\n\nCREATE TABLE PoolActivityLog(\n    Correlationid VARCHAR(200),\n    Operationname VARCHAR(100),\n    Status VARCHAR(300),\n    Eventcategory VARCHAR(200),\n    Level VARCHAR(300),\n    Time VARCHAR(1000),\n    Subscription VARCHAR(3000),\n    Eventinitiatedby VARCHAR(200),\n    Resourcetype VARCHAR(1000),\n    Resourcegroup VARCHAR(500),\n    Resource VARCHAR(3000)\n\n)\nWITH(\n    DISTRIBUTION = ROUND_ROBIN\n)\n\nSELECT * FROM PoolActivityLog\n\nCOPY INTO PoolActivityLog\nFROM 'https://companyapp1099.blob.core.windows.net/data/ActivityLog-01.parquet'\nWITH(\n    FILE_TYPE = 'PARQUET',\n    CREDENTIAL = \n     (\n        IDENTITY = 'SHARED ACCESS SIGNATURE',\n        SECRET = 'sv=2022-11-02&ss=bfqt&srt=sco&sp=rl&se=2024-08-14T18:16:27Z&st=2024-08-14T10:16:27Z&spr=https&sig=qsDKDQCwqv2h1et3nT4jgus8DA%2FxB0Ie4RIB7BgB%2F%2Bk%3D'\n     ) \n)\n\nSELECT * FROM PoolActivityLog",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "datapool",
+				"poolName": "datapool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

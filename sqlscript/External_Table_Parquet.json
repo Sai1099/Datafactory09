@@ -1,0 +1,17 @@
+{
+	"name": "External_Table_Parquet",
+	"properties": {
+		"content": {
+			"query": "DROP EXTERNAL DATA SOURCE srcActivityLog\nDROP EXTERNAL TABLE ActivityLog\nCREATE EXTERNAL DATA SOURCE srcActivityLog \nWITH(\n    location = 'https://companyapp1099.blob.core.windows.net/data',\n    CREDENTIAL = sas\n);\nCREATE MASTER KEY ENCRYPTION BY PASSWORD ='Pradeep@1099'\nCREATE DATABASE SCOPED CREDENTIAL sas\nWITH IDENTITY = 'SHARED ACCESS SIGNATURE',\n SECRET = 'sv=2022-11-02&ss=b&srt=sco&sp=rl&se=2024-08-14T21:48:03Z&st=2024-08-13T13:50:03Z&spr=https&sig=%2Fwg1tq7ZnmVTaBwwuku3G%2FrwW1RUvwrNA7ZXnac%2FryU%3D'\n\n\n\nDROP EXTERNAL TABLE ActivityLog\nCREATE EXTERNAL FILE FORMAT parquet\nWITH(\nFORMAT_TYPE = PARQUET,\nDATA_COMPRESSION ='org.apache.hadoop.io.compress.SnappyCodec'\n)\nCREATE EXTERNAL TABLE ActivityLog(\n    Correlationid VARCHAR(200),\n    Operationname VARCHAR(100),\n    Status VARCHAR(300),\n    Eventcategory VARCHAR(200),\n    Level VARCHAR(300),\n    Time VARCHAR(1000),\n    Subscription VARCHAR(3000),\n    Eventinitiatedby VARCHAR(200),\n    Resourcetype VARCHAR(1000),\n    Resourcegroup VARCHAR(500),\n    Resource VARCHAR(3000)\n\n\n)\nWITH(\n    LOCATION='/*.parquet',\n   \n    DATA_SOURCE = srcActivityLog,\n    FILE_FORMAT =PARQUET\n)\n\nSELECT * FROM ActivityLog",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "appdb",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

@@ -1,0 +1,17 @@
+{
+	"name": "04-PoolExternalCsv",
+	"properties": {
+		"content": {
+			"query": "CREATE MASTER KEY ENCRYPTION BY PASSWORD ='Pradeep@1099'\nCREATE DATABASE SCOPED CREDENTIAL sas\nWITH IDENTITY = 'SHARED ACCESS SIGNATURE',\nSECRET = 'sv=2022-11-02&ss=bfqt&srt=sco&sp=rl&se=2024-08-14T15:22:00Z&st=2024-08-14T07:22:00Z&spr=https&sig=qgR%2F1j3MGVzNRkLD956NSw7E4otTDi5Tu212nhojyp8%3D';\n\nDROP DATABASE SCOPED CREDENTIAL sas;\nDROP EXTERNAL DATA SOURCE srcActivityLog;\n\nCREATE EXTERNAL DATA SOURCE srcActivityLog\nWITH(\n    LOCATION='abfss://data@companyapp1099.blob.core.windows.net',\n    TYPE=HADOOP,\n    CREDENTIAL = sas\n \n);\n\nCREATE EXTERNAL FILE FORMAT delmitedtext\nWITH(\n    FORMAT_TYPE = DELIMITEDTEXT,\n    FORMAT_OPTIONS(\n        FIELD_TERMINATOR=',',\n        FIRST_ROW = 2\n    )\n)\n\nCREATE EXTERNAL TABLE ActivityLog(\n    Correlationid VARCHAR(200),\n    Operationname VARCHAR(100),\n    Status VARCHAR(300),\n    Eventcategory VARCHAR(200),\n    Level VARCHAR(300),\n    Time VARCHAR(1000),\n    Subscription VARCHAR(3000),\n    Eventinitiatedby VARCHAR(200),\n    Resourcetype VARCHAR(1000),\n    Resourcegroup VARCHAR(500),\n    Resource VARCHAR(3000)\n)\nWITH(\n    LOCATION = './ActivityLog-01.csv',\n    FILE_FORMAT = delmitedtext,\n    DATA_SOURCE=srcACtivityLog\n)\n\nSELECT * FROM ActivityLog",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "datapool",
+				"poolName": "datapool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

@@ -1,0 +1,17 @@
+{
+	"name": "External_Table_JSON",
+	"properties": {
+		"content": {
+			"query": "SELECT \nJSON_VALUE(jsonContent,'$.Correlationid') AS Correlationid,\nJSON_VALUE(jsonContent,'$.Operationname' ) AS  Operationname,\nJSON_VALUE(jsonContent,'$.Status') AS Status,\nJSON_VALUE(jsonContent,'$.Eventcategory') AS Eventcategory,\nJSON_VALUE(jsonContent,'$.Level') AS Level,\nCAST(JSON_VALUE(jsonContent,'$.Time') AS datetimeoffset) AS Time,\nJSON_VALUE(jsonContent,'$.Suscription') AS Subscription,\nJSON_VALUE(jsonContent,'$.Eventintiatedby') AS Eventinitiatedby,\nJSON_VALUE(jsonContent,'$.Resourcetype') AS Resourcetype,\nJSON_VALUE(jsonContent,'$.Resourcegroup') AS Resourcegroup,\nJSON_VALUE(jsonContent,'$.Resource') AS Resource\n\nFROM OPENROWSET(\n    BULK 'https://companyapp1099.blob.core.windows.net/data/ActivityLog-01.json',\n    FORMAT = 'csv',\n    FIELDTERMINATOR='0X0b',\n    FIELDQUOTE = '0x0b',\n    ROWTERMINATOR='0x0a'\n\n)\nWITH(\n   jsonContent VARCHAR(MAX)\n)\nAS ROWS",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

@@ -1,0 +1,17 @@
+{
+	"name": "External_Table_CSV",
+	"properties": {
+		"content": {
+			"query": "SELECT COUNT(Operationname),Status\nFROM ActivityLog\nGROUP BY Status;",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "appdb",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
